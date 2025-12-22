@@ -1,3 +1,7 @@
+* {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 
 html, body {
     height: 100%;
@@ -20,4 +24,127 @@ body > .container {
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
+}
+
+
+.body-container{
+    background-color: #ffffff;
+    background-size: cover;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.nav-background{
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    border: none;
+    border-bottom: 1px solid #111111;
+}
+
+.nav-button{
+    border: 1px solid #111111;
+    border-radius: 18px;
+    padding: 4px 18px;
+    color: #111111;
+    margin: 0px 12px;
+}
+
+.nav-button{
+    border: 1px solid #111111;
+    border-radius: 18px;
+    padding: 4px 18px;
+    color: #111111;
+    margin: 0px 12px;
+}
+
+.nav-button{
+    transition: transform 0.4s ease-out, filter 0.4s ease-out;
+}
+
+.nav-button:hover {
+    transform: scale(1.03);
+}
+
+.first-container{
+    text-align: center;
+    color: #111111;
+    border: 1px solid #111111;
+}
+
+.second-conatiner{
+    border: 1px solid #111111;
+    color: #111111;
+}
+
+.header-background{
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.form-control {
+  border: 1px solid #111111;
+  padding: 4px 24px;
+  width: 100%;
+  height: 46px;
+  gap: 10px;
+}
+
+.form-control::placeholder {
+  color: #111111;
+  font-size: 16px;
+  font-weight: 400;
+  opacity: 1;
+}
+
+.form-control:focus {
+  border-color: #111111;
+}
+
+.login-container{
+    border: 1px solid #111111;
+}
+
+.submit-button{
+    background-color: #111111;
+    border-radius: 18px;
+    padding: 4px 18px;
+    color: #ffffff;
+}
+
+.submit-button{
+    transition: transform 0.4s ease-out, filter 0.4s ease-out;
+}
+
+.submit-button:hover {
+    transform: scale(1.03);
+}
+
+.logout{
+    background-color: #111111;
+    border-radius: 18px;
+    padding: 4px 18px;
+    color: #ffffff;
+    margin: 0px 12px;
+}
+
+.logout{
+    transition: transform 0.4s ease-out, filter 0.4s ease-out;
+}
+
+.logout:hover {
+    transform: scale(1.03);
+}
+
+.link-text{
+    color: #111111;
+}
+
+.third-container{
+    border: 1px solid #111111;
+    color: #111111;
+    border-radius: 6px;
 }

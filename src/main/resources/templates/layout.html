@@ -9,11 +9,12 @@
     <title>URL Shortener</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+<body class="body-container">
+<nav class="navbar navbar-expand-md fixed-top nav-background">
     <div class="container">
-        <a class="navbar-brand" th:href="@{/}">URL Shortener</a>
+        <a class="navbar-brand" th:href="@{/}"><img src="https://image2url.com/images/1766387023313-def98c44-3f67-4d90-8f36-8e31d18f46b9.png" width="250px" alt="Logo"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -21,25 +22,25 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item" sec:authorize="hasRole('USER')">
-                    <a class="nav-link" href="#" th:href="@{/my-urls}">My URLs</a>
+                    <a class="nav-button" href="#" th:href="@{/my-urls}">My URLs</a>
                 </li>
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link" href="#" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+                    <a class="nav-button" href="#" th:href="@{/admin/dashboard}">Admin Dashboard</a>
                 </li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" href="#" th:href="@{/login}">Login</a>
+                    <a class="nav-button" href="#" th:href="@{/login}">Login</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" href="#" th:href="@{/register}">Register</a>
+                    <a class="nav-button" href="#" th:href="@{/register}">Register</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <span class="nav-link">Welcome <span sec:authentication="name"></span></span>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="nav-link">Logout</button>
+                        <button type="submit" class="logout">Logout</button>
                     </form>
                 </li>
             </ul>
@@ -50,7 +51,7 @@
 <div class="container">
 
     <div th:if="${successMessage}"
-         class="alert alert-success alert-dismissible fade show mt-3"
+         class="alert alert-success alert-dismissible fade show mt-5"
          role="alert">
         <span th:text="${successMessage}"></span>
         <button type="button" class="btn-close"
@@ -58,7 +59,7 @@
         </button>
     </div>
     <div th:if="${errorMessage}"
-         class="alert alert-danger alert-dismissible fade show mt-3"
+         class="alert alert-danger alert-dismissible fade show mt-5"
          role="alert">
         <span th:text="${errorMessage}"></span>
         <button type="button" class="btn-close"

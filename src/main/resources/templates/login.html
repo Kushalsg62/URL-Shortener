@@ -7,14 +7,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div layout:fragment="content">
         <div class="row justify-content-center mt-5">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Login</h5>
+                    <div class="header-background">
+                        <h5 class="card-title mt-3 mb-1 text-center">Login</h5>
                     </div>
                     <div class="card-body">
                         <div th:if="${param.error}" class="alert alert-danger">
@@ -26,16 +27,16 @@
                         <form th:action="@{/login}" method="post">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required autofocus>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter the username" required autofocus>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter the password" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
+                            <button type="submit" class="submit-button">Login</button>
                         </form>
                         <div class="mt-3">
-                            <p>Don't have an account? <a th:href="@{/register}">Register</a></p>
+                            <p>Don't have an account? <a th:href="@{/register}" class="link-text">Register</a></p>
                         </div>
                     </div>
                 </div>

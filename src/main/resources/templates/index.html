@@ -8,16 +8,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div layout:fragment="content">
-    <div class="jumbotron bg-light p-5 rounded-3 my-4">
-        <p class="lead">A simple URL shortener service. Create short, easy-to-share links.</p>
+    <div class="jumbotron mt-5 p-3 rounded-3 my-4 first-container">
+        <h1>Shorten Your Long Links</h1>
+        <p>URL Shortener is an efficient and easy-to-use URL shortening service that streamlines your <br/> online experience.</p>
     </div>
 
-    <div class="card mt-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Create a Short URL</h5>
+    <div class="card mt-4 second-conatiner">
+        <div class="header-background">
+            <h3 class="card-title mt-3 mb-0 text-center">Create a Short URL</h3>
         </div>
         <div class="card-body">
             <form th:action="@{/short-urls}" method="post"
@@ -26,7 +28,7 @@
                     <label for="originalUrl" class="form-label">Original URL</label>
                     <input type="text" class="form-control" id="originalUrl"
                            th:field="*{originalUrl}"
-                           placeholder="https://example.com/my-long-url">
+                           placeholder="Enter the link here">
                     <div class="text-danger"
                          th:if="${#fields.hasErrors('originalUrl')}"
                          th:errors="*{originalUrl}"></div>
@@ -44,21 +46,21 @@
                     <label class="form-check-label" for="isPrivate">Private (only you can access)</label>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Shorten URL</button>
+                <button type="submit" class="submit-button">Shorten URL</button>
             </form>
         </div>
     </div>
 
-    <h2 class="mt-5">Public Shortened URLs</h2>
+    <h3 class="mt-5 mb-1 text-center">Public Shortened URLs</h3>
     <div th:if="${shortUrls.data.isEmpty()}" class="alert alert-info">
         No public URLs have been created yet.
     </div>
-    <div th:unless="${shortUrls.data.isEmpty()}" class="table-responsive">
+    <div th:unless="${shortUrls.data.isEmpty()}" class="table-responsive third-container mb-1">
         <table class="table table-striped table-hover">
             <thead>
             <tr>
-                <th>Short URL</th>
-                <th>Original URL</th>
+                <th>Short Link</th>
+                <th>Original Link</th>
                 <th>Created By</th>
                 <th>Created</th>
                 <th>Expires</th>

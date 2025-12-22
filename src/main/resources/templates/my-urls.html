@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My URLs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const selectAllCheckbox = document.getElementById('selectAll');
@@ -51,25 +52,25 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <h2 class="mt-5">My Shortened URLs</h2>
+        <h3 class="mt-5 text-center">My Shortened URLs</h3>
         <div th:if="${shortUrls.data.isEmpty()}" class="alert alert-info">
             You haven't created any short URLs yet.
         </div>
         <div th:unless="${shortUrls.data.isEmpty()}" class="table-responsive">
             <form id="deleteForm" th:action="@{/delete-urls}" method="post">
                 <div class="mb-3">
-                    <button id="deleteSelectedBtn" class="btn btn-danger" disabled>
+                    <button id="deleteSelectedBtn" class="submit-button" disabled>
                         Delete Selected
                     </button>
                 </div>
-                <table class="table table-striped table-hover">
+                <table class="table table-striped table-hover third-container">
                     <thead>
                         <tr>
                             <th>
                                 <input type="checkbox" id="selectAll" class="form-check-input">
                             </th>
-                            <th>Short URL</th>
-                            <th>Original URL</th>
+                            <th>Short Link</th>
+                            <th>Original Link</th>
                             <th>Created</th>
                             <th>Expires</th>
                             <th>Private</th>
