@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.time.Instant;
 import java.util.List;
@@ -100,6 +101,7 @@ public class ShortUrlService {
     }
 
     @Transactional
+    @Cacheable(value = "shortUrls", key = "#shortKey")
     public Optional<ShortUrlDto> accessShortUrl(String shortKey, Long userId) {
         Optional<ShortUrl> shortUrlOptional = shortUrlRepository.findByShortKey(shortKey);
         if(shortUrlOptional.isEmpty()) {
