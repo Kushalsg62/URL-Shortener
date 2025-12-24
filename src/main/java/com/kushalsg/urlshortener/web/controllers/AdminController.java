@@ -9,16 +9,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import com.kushalsg.urlshortener.domain.repositories.ShortUrlRepository;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
     private final ShortUrlService shortUrlService;
     private final ApplicationProperties properties;
+    private final ShortUrlRepository shortUrlRepository;
 
-    public AdminController(ShortUrlService shortUrlService, ApplicationProperties properties) {
+    public AdminController(ShortUrlService shortUrlService,
+                           ApplicationProperties properties,
+                           ShortUrlRepository shortUrlRepository) {
         this.shortUrlService = shortUrlService;
         this.properties = properties;
+        this.shortUrlRepository = shortUrlRepository;
     }
 
     @GetMapping("/dashboard")
@@ -30,5 +37,13 @@ public class AdminController {
         model.addAttribute("baseUrl", properties.baseUrl());
         model.addAttribute("paginationUrl", "/admin/dashboard");
         return "admin-dashboard";
+    }
+    @PostMapping("/toggle-status/{id}")
+    public String toggleStatus(@PathVariable Long id) {
+        shortUrlRepository.findById(id).ifPresent(url -> {
+            url.setIsActive(!url.getIsActive());
+            shortUrlRepository.save(url);
+        });
+        return "redirect:/admin/dashboard";
     }
 }

@@ -49,14 +49,7 @@ body > .container {
     padding: 4px 18px;
     color: #111111;
     margin: 0px 12px;
-}
-
-.nav-button{
-    border: 1px solid #111111;
-    border-radius: 18px;
-    padding: 4px 18px;
-    color: #111111;
-    margin: 0px 12px;
+    text-decoration: none;
 }
 
 .nav-button{
