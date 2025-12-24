@@ -76,8 +76,19 @@
                     <a th:href="${url.originalUrl}" th:text="${#strings.abbreviate(url.originalUrl, 50)}" target="_blank"></a>
                 </td>
                 <td>
-                    <span th:if="${url.isActive}" class="badge bg-success">Active</span>
-                    <span th:unless="${url.isActive}" class="badge bg-secondary">Inactive</span>
+                    <div class="status-toggle">
+                        <span th:class="${url.isActive ? 'status-label active' : 'status-label inactive'}"
+                              th:text="${url.isActive ? 'Active' : 'Inactive'}">
+                        </span>
+
+                        <div th:if="${url.isActive}" class="toggle-btn active">
+                            <img src="https://image2url.com/r2/bucket1/images/1766566155747-12e8bcf6-40df-4ea1-80af-62b36f9a2766.svg" />
+                        </div>
+
+                        <div th:unless="${url.isActive}" class="toggle-btn inactive">
+                            <img src="https://image2url.com/r2/bucket1/images/1766566213522-7d91ff6a-7505-4b85-b81f-d38a6664f8d9.svg" />
+                        </div>
+                    </div>
                 </td>
                 <td th:text="${url.createdBy != null ? url.createdBy.name : 'Guest'}"></td>
                 <td th:text="${#temporals.format(url.createdAt, 'yyyy-MM-dd HH:mm')}"></td>

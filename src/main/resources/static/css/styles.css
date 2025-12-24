@@ -141,3 +141,37 @@ body > .container {
     color: #111111;
     border-radius: 6px;
 }
+
+.status-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-label {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.status-label.active {
+    color: #1EB036;
+}
+
+.status-label.inactive {
+    color: #B0901E;
+}
+
+.toggle-btn {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+}
+
+.toggle-btn.active {
+    background-color: rgba(30, 176, 54, 0.14);
+}
+
+.toggle-btn.inactive {
+    background-color: rgba(176, 144, 30, 0.19);
+}
