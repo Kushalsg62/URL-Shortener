@@ -61,6 +61,7 @@
             <tr>
                 <th>Short Link</th>
                 <th>Original Link</th>
+                <th>Status</th>
                 <th>Created By</th>
                 <th>Created</th>
                 <th>Expires</th>
@@ -73,6 +74,10 @@
                 </td>
                 <td>
                     <a th:href="${url.originalUrl}" th:text="${#strings.abbreviate(url.originalUrl, 50)}" target="_blank"></a>
+                </td>
+                <td>
+                    <span th:if="${url.isActive}" class="badge bg-success">Active</span>
+                    <span th:unless="${url.isActive}" class="badge bg-secondary">Inactive</span>
                 </td>
                 <td th:text="${url.createdBy != null ? url.createdBy.name : 'Guest'}"></td>
                 <td th:text="${#temporals.format(url.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
