@@ -17,9 +17,9 @@
         <p>URL Shortener is an efficient and easy-to-use URL shortening service that streamlines your <br/> online experience.</p>
     </div>
 
-    <div class="card mt-4 second-conatiner">
+    <div class="mt-4 p-3 rounded-3 second-conatiner">
         <div class="header-background">
-            <h3 class="card-title mt-3 mb-0 text-center">Create a Short URL</h3>
+            <h3 class="card-title mb-0 text-center">Create a Short URL</h3>
         </div>
         <div class="card-body">
             <form th:action="@{/short-urls}" method="post"
@@ -82,11 +82,11 @@
                         </span>
 
                         <div th:if="${url.isActive}" class="toggle-btn active">
-                            <img src="https://image2url.com/r2/bucket1/images/1766566155747-12e8bcf6-40df-4ea1-80af-62b36f9a2766.svg" />
+                            <img src="https://cdn.prod.website-files.com/6365d860c7b7a7191055eb8a/664236e6d489d8d70f699ba4_65bf4dc4e36b396fed5bd320_link-01.svg" width="15px" />
                         </div>
 
                         <div th:unless="${url.isActive}" class="toggle-btn inactive">
-                            <img src="https://image2url.com/r2/bucket1/images/1766566213522-7d91ff6a-7505-4b85-b81f-d38a6664f8d9.svg" />
+                            <img src="https://cdn.prod.website-files.com/6365d860c7b7a7191055eb8a/664236e6190ef9ec98c76db7_65bf4dc5b68dbbea9ec5ceb8_link-broken-01.svg" width="15px" />
                         </div>
                     </div>
                 </td>

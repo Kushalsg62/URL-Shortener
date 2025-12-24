@@ -165,7 +165,8 @@ body > .container {
     border-radius: 50%;
     width: 30px;
     height: 30px;
-    padding: 5px;
+    padding-left: 7px;
+    padding-top: 3px;
 }
 
 .toggle-btn.active {
