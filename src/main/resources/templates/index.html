@@ -61,6 +61,7 @@
             <tr>
                 <th>Short Link</th>
                 <th>Original Link</th>
+                <th>QR Code</th>
                 <th>Status</th>
                 <th>Created By</th>
                 <th>Created</th>
@@ -76,23 +77,33 @@
                     <a th:href="${url.originalUrl}" th:text="${#strings.abbreviate(url.originalUrl, 50)}" target="_blank"></a>
                 </td>
                 <td>
+                    <a th:href="${baseUrl + '/s/' + url.shortKey()}"
+                       target="_blank">
+                        <img th:if="${qrCodeMap[url.id()] != null}"
+                             th:src="'data:image/png;base64,' + ${qrCodeMap[url.id()]}"
+                             alt="QR Code"
+                             style="width: 80px; height: 80px; cursor: pointer;" />
+                    </a>
+                </td>
+                <td>
                     <div class="status-toggle">
-                        <span th:class="${url.isActive ? 'status-label active' : 'status-label inactive'}"
-                              th:text="${url.isActive ? 'Active' : 'Inactive'}">
+                        <span th:class="${(url.isActive and (url.expiresAt == null or url.expiresAt.isAfter(T(java.time.Instant).now()))) ? 'status-label active' : 'status-label inactive'}"
+                              th:text="${(url.isActive and (url.expiresAt == null or url.expiresAt.isAfter(T(java.time.Instant).now()))) ? 'Active' : 'Inactive'}">
                         </span>
 
-                        <div th:if="${url.isActive}" class="toggle-btn active">
+                        <div th:if="${url.isActive and (url.expiresAt == null or url.expiresAt.isAfter(T(java.time.Instant).now()))}" class="toggle-btn active">
                             <img src="https://cdn.prod.website-files.com/6365d860c7b7a7191055eb8a/664236e6d489d8d70f699ba4_65bf4dc4e36b396fed5bd320_link-01.svg" width="15px" />
                         </div>
 
-                        <div th:unless="${url.isActive}" class="toggle-btn inactive">
+                        <div th:unless="${url.isActive and (url.expiresAt == null or url.expiresAt.isAfter(T(java.time.Instant).now()))}" class="toggle-btn inactive">
                             <img src="https://cdn.prod.website-files.com/6365d860c7b7a7191055eb8a/664236e6190ef9ec98c76db7_65bf4dc5b68dbbea9ec5ceb8_link-broken-01.svg" width="15px" />
                         </div>
                     </div>
                 </td>
+
                 <td th:text="${url.createdBy != null ? url.createdBy.name : 'Guest'}"></td>
-                <td th:text="${#temporals.format(url.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                <td th:text="${url.expiresAt != null ? #temporals.format(url.expiresAt, 'yyyy-MM-dd HH:mm') : 'Never'}"></td>
+                <td th:text="${T(com.kushalsg.urlshortener.util.TimeUtil).format(url.createdAt)}"></td>
+                <td th:text="${url.expiresAt != null ? T(com.kushalsg.urlshortener.util.TimeUtil).format(url.expiresAt) : 'Never'}"></td>
             </tr>
             </tbody>
         </table>

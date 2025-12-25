@@ -7,12 +7,15 @@ import com.kushalsg.urlshortener.domain.models.PagedResult;
 import com.kushalsg.urlshortener.domain.models.ShortUrlDto;
 import com.kushalsg.urlshortener.domain.services.ShortUrlService;
 import com.kushalsg.urlshortener.web.dtos.CreateShortUrlForm;
+import com.kushalsg.urlshortener.domain.services.QRCodeService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,14 +24,17 @@ import java.util.Optional;
 public class ShortUrlController {
     private final ShortUrlService shortUrlService;
     private final ApplicationProperties properties;
+    private final QRCodeService qrCodeService;
     private final SecurityUtils securityUtils;
 
     public ShortUrlController(ShortUrlService shortUrlService,
                               ApplicationProperties properties,
-                              SecurityUtils securityUtils) {
+                              SecurityUtils securityUtils,
+                              QRCodeService qrCodeService) {
         this.shortUrlService = shortUrlService;
         this.properties = properties;
         this.securityUtils = securityUtils;
+        this.qrCodeService = qrCodeService;
     }
 
     @GetMapping("/")
@@ -44,6 +50,18 @@ public class ShortUrlController {
 
     private void addShortUrlsDataToModel(Model model, int pageNo) {
         PagedResult<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls(pageNo, properties.pageSize());
+
+        Map<Long, String> qrCodeMap = new HashMap<>();
+
+        shortUrls.data().forEach(url -> {
+            String fullUrl = properties.baseUrl() + "/s/" + url.shortKey();
+            String qrCode = qrCodeService.generateQRCodeBase64(fullUrl, 200, 200);
+            qrCodeMap.put(url.id(), qrCode);
+        });
+
+        model.addAttribute("qrCodeMap", qrCodeMap);
+
+
         model.addAttribute("shortUrls", shortUrls);
         model.addAttribute("baseUrl", properties.baseUrl());
         model.addAttribute("paginationUrl", "/");
