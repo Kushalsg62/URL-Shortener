@@ -177,3 +177,7 @@ body > .container {
     background-color: rgba(176, 144, 30, 0.19);
 }
 
+.table td,
+.table th {
+    vertical-align: middle;
+}
