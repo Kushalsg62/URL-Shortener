@@ -532,6 +532,19 @@
 
             <div class="advanced-options" sec:authorize="isAuthenticated()">
                 <div class="option-group">
+                    <span class="option-label">Custom Alias</span>
+                    <input type="text"
+                           class="option-input"
+                           id="customAlias"
+                           th:field="*{customAlias}"
+                           placeholder="my-link"
+                           style="width: 130px;"/>
+                    <span class="option-label" style="color: var(--text-muted); font-size:0.78rem;">3–20 chars, letters/numbers/hyphens</span>
+                    <div class="text-danger-saas"
+                         th:if="${#fields.hasErrors('customAlias')}"
+                         th:errors="*{customAlias}"></div>
+                </div>
+                <div class="option-group">
                     <span class="option-label">Expires in</span>
                     <input type="number"
                            class="option-input"

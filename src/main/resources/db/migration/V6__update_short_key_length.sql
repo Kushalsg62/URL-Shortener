@@ -1,0 +1,1 @@
+ALTER TABLE short_urls ALTER COLUMN short_key TYPE VARCHAR(50);

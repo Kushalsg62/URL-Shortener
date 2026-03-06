@@ -1188,3 +1188,22 @@ h3 {
     color: var(--text-muted);
     margin: 4px 0 0;
 }
+
+.advanced-options {
+    row-gap: 12px;
+}
+
+/* Separator between option groups */
+.option-group + .option-group {
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+    .option-group + .option-group {
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+    }
+}

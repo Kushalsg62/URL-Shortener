@@ -44,7 +44,7 @@ public class ShortUrlController {
         this.addShortUrlsDataToModel(model, page);
         model.addAttribute("paginationUrl", "/");
         model.addAttribute("createShortUrlForm",
-                new CreateShortUrlForm("", false, null));
+                new CreateShortUrlForm("", false, null, null));
         return "index";
     }
 
@@ -78,16 +78,17 @@ public class ShortUrlController {
             Long userId = securityUtils.getCurrentUserId();
             CreateShortUrlCmd cmd = new CreateShortUrlCmd(
                     form.originalUrl(),
-                    form.isPrivateChecked(), // null-safe: null or false = public
+                    form.isPrivateChecked(),
                     form.expirationInDays(),
-                    userId
+                    userId,
+                    userId != null ? form.customAlias() : null // guests cannot set alias
             );
             var shortUrlDto = shortUrlService.createShortUrl(cmd);
             redirectAttributes.addFlashAttribute("successMessage",
                     "Short URL created successfully " +
                             properties.baseUrl() + "/s/" + shortUrlDto.shortKey());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to create short URL");
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/";
     }
@@ -99,8 +100,7 @@ public class ShortUrlController {
         if (shortUrlDtoOptional.isEmpty()) {
             throw new ShortUrlNotFoundException("Invalid short key: " + shortKey);
         }
-        ShortUrlDto shortUrlDto = shortUrlDtoOptional.get();
-        return "redirect:" + shortUrlDto.originalUrl();
+        return "redirect:" + shortUrlDtoOptional.get().originalUrl();
     }
 
     @GetMapping("/my-urls")

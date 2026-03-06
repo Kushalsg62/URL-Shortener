@@ -4,5 +4,6 @@ public record CreateShortUrlCmd(
         String originalUrl,
         Boolean isPrivate,
         Integer expirationInDays,
-        Long userId
+        Long userId,
+        String customAlias
 ) {}

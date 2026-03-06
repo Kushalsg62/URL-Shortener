@@ -83,10 +83,20 @@ public class ShortUrlService {
                 throw new RuntimeException("Invalid URL " + cmd.originalUrl());
             }
         }
-        var shortKey = generateUniqueShortKey();
+
+        String shortKey;
+        if (cmd.customAlias() != null && !cmd.customAlias().isBlank()) {
+            // Append 6-char random suffix to alias — guarantees global uniqueness
+            // e.g. "google" → "google-a1b2c3"
+            shortKey = generateUniqueAliasKey(cmd.customAlias().toLowerCase().trim());
+        } else {
+            shortKey = generateUniqueShortKey();
+        }
+
         var shortUrl = new ShortUrl();
         shortUrl.setOriginalUrl(cmd.originalUrl());
         shortUrl.setShortKey(shortKey);
+
         if (cmd.userId() == null) {
             shortUrl.setCreatedBy(null);
             shortUrl.setIsPrivate(false);
@@ -98,18 +108,14 @@ public class ShortUrlService {
                     ? Instant.now().plus(cmd.expirationInDays(), DAYS)
                     : null);
         }
+
         shortUrl.setClickCount(0L);
+        shortUrl.setIsActive(true);
         shortUrl.setCreatedAt(Instant.now());
         shortUrlRepository.save(shortUrl);
         return entityMapper.toShortUrlDto(shortUrl);
     }
 
-    /**
-     * Handles the full access flow:
-     * - Validates expiry, active status, and privacy
-     * - Increments click count (always hits DB — intentionally not cached)
-     * - Uses a separate cached method only for the lookup
-     */
     @Transactional
     public Optional<ShortUrlDto> accessShortUrl(String shortKey, Long userId) {
         Optional<ShortUrl> shortUrlOptional = shortUrlRepository.findByShortKey(shortKey);
@@ -134,21 +140,28 @@ public class ShortUrlService {
             return Optional.empty();
         }
 
-        // Safe to increment — outside of any cache
         shortUrl.setClickCount(shortUrl.getClickCount() + 1);
         shortUrlRepository.save(shortUrl);
-
         return Optional.of(entityMapper.toShortUrlDto(shortUrl));
     }
 
-    /**
-     * Cached lookup — only for read purposes (e.g. previewing a URL).
-     * Never use this for redirect + click tracking.
-     */
     @Cacheable(value = "shortUrls", key = "#shortKey")
     public Optional<ShortUrlDto> getCachedShortUrl(String shortKey) {
         return shortUrlRepository.findByShortKey(shortKey)
                 .map(entityMapper::toShortUrlDto);
+    }
+
+    /**
+     * Generates a unique key from a custom alias by appending a 6-char suffix.
+     * e.g. "google" → "google-a1b2c3"
+     * Retries if collision occurs (astronomically unlikely).
+     */
+    private String generateUniqueAliasKey(String alias) {
+        String shortKey;
+        do {
+            shortKey = alias + "-" + generateRandomShortKey();
+        } while (shortUrlRepository.existsByShortKey(shortKey));
+        return shortKey;
     }
 
     private String generateUniqueShortKey() {
