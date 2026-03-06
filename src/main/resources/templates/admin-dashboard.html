@@ -7,47 +7,251 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <style>
+        .admin-table-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow-x: auto;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+            min-width: 900px;
+        }
+
+        .admin-table thead tr {
+            background: var(--table-header-bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-table thead th {
+            padding: 14px 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .admin-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        .admin-table tbody tr:last-child { border-bottom: none; }
+        .admin-table tbody tr:hover { background: var(--row-hover); }
+
+        .admin-table tbody td {
+            padding: 16px 20px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .short-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--accent) !important;
+            font-weight: 500;
+            text-decoration: none;
+            background: var(--accent-subtle);
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            transition: all 0.15s;
+        }
+
+        .short-link:hover {
+            background: var(--accent);
+            color: white !important;
+        }
+
+        .original-link {
+            color: var(--text-secondary) !important;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .original-link:hover { color: var(--text-primary) !important; }
+
+        .date-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .status-pill.active   { background: rgba(16,185,129,0.1); color: #10b981; }
+        .status-pill.inactive { background: rgba(245,158,11,0.1);  color: #f59e0b; }
+
+        .status-pill .pip {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+        }
+
+        .toggle-btn.active {
+            background: rgba(16,185,129,0.1);
+            border-color: rgba(16,185,129,0.3);
+        }
+
+        .toggle-btn.inactive {
+            background: rgba(245,158,11,0.1);
+            border-color: rgba(245,158,11,0.3);
+        }
+
+        .toggle-btn:hover { transform: scale(1.08); }
+
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+        }
+
+        .empty-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .page-heading {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
-        <h3 class="mt-5 text-center">All Shortened URLs</h3>
-        <div th:if="${shortUrls.data.isEmpty()}" class="alert alert-info">
-            No short URLs found.
+<div layout:fragment="content">
+
+    <h3 class="page-heading">Admin Dashboard</h3>
+
+    <div class="admin-table-card">
+        <div th:if="${shortUrls.data.isEmpty()}" class="empty-state">
+            <div class="empty-title">No short URLs found</div>
+            <div class="empty-desc">No links have been created yet.</div>
         </div>
-        <div th:unless="${shortUrls.data.isEmpty()}" class="table-responsive third-container">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Short Link</th>
-                            <th>Original Link</th>
-                            <th>Created By</th>
-                            <th>Created</th>
-                            <th>Expires</th>
-                            <th>Private</th>
-                            <th>Clicks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="url : ${shortUrls.data}">
-                            <td>
-                                <a th:href="@{/s/{key}(key=${url.shortKey})}" th:text="${baseUrl + '/s/' + url.shortKey}" target="_blank"></a>
-                            </td>
-                            <td>
-                                <a th:href="${url.originalUrl}" th:text="${#strings.abbreviate(url.originalUrl, 50)}" target="_blank"></a>
-                            </td>
-                            <td th:text="${url.createdBy != null ? url.createdBy.name : 'Guest'}"></td>
-                            <td th:text="${#temporals.format(url.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                            <td th:text="${url.expiresAt != null ? #temporals.format(url.expiresAt, 'yyyy-MM-dd HH:mm') : 'Never'}"></td>
-                            <td>
-                                <span th:if="${url.private}" class="badge bg-secondary">Private</span>
-                                <span th:unless="${url.private}" class="badge bg-success">Public</span>
-                            </td>
-                            <td th:text="${url.clickCount}"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            <div th:insert="~{pagination}"></div>
+
+        <div th:unless="${shortUrls.data.isEmpty()}">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>Short Link</th>
+                    <th>Original Link</th>
+                    <th>Created By</th>
+                    <th>Created</th>
+                    <th>Expires</th>
+                    <th>Visibility</th>
+                    <th>Clicks</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="url : ${shortUrls.data}">
+                    <td>
+                        <a class="short-link"
+                           th:href="@{/s/{key}(key=${url.shortKey})}"
+                           th:text="${baseUrl + '/s/' + url.shortKey}"
+                           target="_blank"></a>
+                    </td>
+                    <td>
+                        <a class="original-link"
+                           th:href="${url.originalUrl}"
+                           th:text="${#strings.abbreviate(url.originalUrl, 50)}"
+                           target="_blank"
+                           th:title="${url.originalUrl}"></a>
+                    </td>
+                    <td th:text="${url.createdBy != null ? url.createdBy.name : 'Guest'}"></td>
+                    <td>
+                                <span class="date-text"
+                                      th:text="${T(com.kushalsg.urlshortener.util.TimeUtil).format(url.createdAt)}"></span>
+                    </td>
+                    <td>
+                                <span class="date-text"
+                                      th:text="${url.expiresAt != null ? T(com.kushalsg.urlshortener.util.TimeUtil).format(url.expiresAt) : 'Never'}"></span>
+                    </td>
+                    <td>
+                        <span th:if="${url.private}" class="badge bg-secondary">Private</span>
+                        <span th:unless="${url.private}" class="badge bg-success">Public</span>
+                    </td>
+                    <td th:text="${url.clickCount}"></td>
+                    <td>
+                                <span th:if="${url.isActive and (url.expiresAt == null or url.expiresAt.isAfter(T(java.time.Instant).now()))}"
+                                      class="status-pill active">
+                                    <span class="pip"></span> Active
+                                </span>
+                        <span th:unless="${url.isActive and (url.expiresAt == null or url.expiresAt.isAfter(T(java.time.Instant).now()))}"
+                              class="status-pill inactive">
+                                    <span class="pip"></span> Inactive
+                                </span>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/toggle-status/{id}(id=${url.id})}" method="post">
+                            <button type="submit"
+                                    th:class="${url.isActive ? 'toggle-btn active' : 'toggle-btn inactive'}"
+                                    th:title="${url.isActive ? 'Click to Deactivate' : 'Click to Activate'}">
+                                <img th:if="${url.isActive}"
+                                     src="https://cdn.prod.website-files.com/6365d860c7b7a7191055eb8a/664236e6d489d8d70f699ba4_65bf4dc4e36b396fed5bd320_link-01.svg"
+                                     width="14px" alt="Active"/>
+                                <img th:unless="${url.isActive}"
+                                     src="https://cdn.prod.website-files.com/6365d860c7b7a7191055eb8a/664236e6190ef9ec98c76db7_65bf4dc5b68dbbea9ec5ceb8_link-broken-01.svg"
+                                     width="14px" alt="Inactive"/>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
+
+    <div class="mt-4" th:insert="~{pagination}"></div>
+
+</div>
 </body>
 </html>

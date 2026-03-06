@@ -1,6 +1,5 @@
 package com.kushalsg.urlshortener.web.dtos;
 
-
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -12,5 +11,8 @@ public record CreateShortUrlForm(
         @Min(1)
         @Max(365)
         Integer expirationInDays
-        ) {
+) {
+    public boolean isPrivateChecked() {
+        return isPrivate != null && isPrivate;
+    }
 }
