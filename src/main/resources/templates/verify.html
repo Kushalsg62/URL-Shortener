@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifying — Shorten.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background: #f8f9fc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .verify-card {
+            background: #ffffff;
+            border: 1px solid #e4e7ef;
+            border-radius: 20px;
+            padding: 52px 48px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 24px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verify-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3a4ee0, #6c7fff);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 36px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: #4f63ff;
+            color: #fff;
+            border-radius: 9px;
+            font-size: 1rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f1117;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-name span {
+            color: #4f63ff;
+            font-weight: 400;
+        }
+
+        .verify-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f1117;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+
+        .verify-desc {
+            font-size: 0.875rem;
+            color: #8b92a9;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .turnstile-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .error-msg {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.25);
+            color: #991b1b;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .verify-footer {
+            font-size: 0.78rem;
+            color: #8b92a9;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="verify-card">
+
+    <!-- Brand -->
+    <div class="brand">
+        <span class="brand-icon">S</span>
+        <span class="brand-name">Shorten<span>.io</span></span>
+    </div>
+
+    <h1 class="verify-title">Just a quick check</h1>
+    <p class="verify-desc">
+        We need to verify you're human before letting you in.<br/>
+        This only happens once per session.
+    </p>
+
+    <!-- Error -->
+    <div th:if="${param.error}" class="error-msg">
+        Verification failed. Please try again.
+    </div>
+
+    <!-- Turnstile widget — auto submits on success -->
+    <form th:action="@{/verify}" method="post">
+        <div class="turnstile-wrap">
+            <div class="cf-turnstile"
+                 th:attr="data-sitekey=${siteKey}"
+                 data-callback="onVerified">
+            </div>
+        </div>
+    </form>
+
+    <p class="verify-footer">
+        Protected by Cloudflare Turnstile
+    </p>
+</div>
+
+<script>
+    // Auto-submit the form once Turnstile completes
+    function onVerified(token) {
+        const form = document.querySelector('form');
+        form.submit();
+    }
+</script>
+</body>
+</html>

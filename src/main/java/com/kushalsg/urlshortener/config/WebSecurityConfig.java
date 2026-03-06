@@ -25,26 +25,27 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(CsrfConfigurer::disable)
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(
-                    "/error", "/webjars/**", "/css/**", "/js/**", "/images/**",
-                    "/", "/short-urls", "/s/**", "/register", "/login"
-                ).permitAll()
-                .requestMatchers("/my-urls").authenticated()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
-            );
+                .csrf(CsrfConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(
+                                "/error", "/webjars/**", "/css/**", "/js/**", "/images/**",
+                                "/", "/short-urls", "/s/**", "/register", "/login",
+                                "/verify"  // allow verify page for all
+                        ).permitAll()
+                        .requestMatchers("/my-urls").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                );
 
         return http.build();
     }

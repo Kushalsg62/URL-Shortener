@@ -20,6 +20,9 @@ public record ApplicationProperties(
         @DefaultValue("true")
         boolean validateOriginalUrl,
         @DefaultValue("10")
-        int pageSize
-) {
-}
+        int pageSize,
+        @DefaultValue("1x00000000000000000000AA")
+        String turnstileSiteKey,
+        @DefaultValue("1x0000000000000000000000000000000AA")
+        String turnstileSecretKey
+) {}
