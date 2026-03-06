@@ -7,13 +7,13 @@ import com.kushalsg.urlshortener.domain.models.PagedResult;
 import com.kushalsg.urlshortener.domain.models.ShortUrlDto;
 import com.kushalsg.urlshortener.domain.repositories.ShortUrlRepository;
 import com.kushalsg.urlshortener.domain.repositories.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.time.Instant;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.kushalsg.urlshortener.domain.services.RandomUtils.generateRandomShortKey;
-import static java.time.temporal.ChronoUnit.*;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,7 +34,8 @@ public class ShortUrlService {
 
     public ShortUrlService(ShortUrlRepository shortUrlRepository,
                            EntityMapper entityMapper,
-                           ApplicationProperties properties, UserRepository userRepository) {
+                           ApplicationProperties properties,
+                           UserRepository userRepository) {
         this.shortUrlRepository = shortUrlRepository;
         this.entityMapper = entityMapper;
         this.properties = properties;
@@ -64,35 +65,38 @@ public class ShortUrlService {
 
     public PagedResult<ShortUrlDto> findAllShortUrls(int page, int pageSize) {
         Pageable pageable = getPageable(page, pageSize);
-        var shortUrlsPage =  shortUrlRepository.findAllShortUrls(pageable).map(entityMapper::toShortUrlDto);
+        var shortUrlsPage = shortUrlRepository.findAllShortUrls(pageable)
+                .map(entityMapper::toShortUrlDto);
         return PagedResult.from(shortUrlsPage);
     }
 
     private Pageable getPageable(int page, int size) {
-        page = page > 1 ? page - 1: 0;
+        page = page > 1 ? page - 1 : 0;
         return PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
     }
 
     @Transactional
     public ShortUrlDto createShortUrl(CreateShortUrlCmd cmd) {
-        if(properties.validateOriginalUrl()) {
+        if (properties.validateOriginalUrl()) {
             boolean urlExists = UrlExistenceValidator.isUrlExists(cmd.originalUrl());
-            if(!urlExists) {
-                throw new RuntimeException("Invalid URL "+cmd.originalUrl());
+            if (!urlExists) {
+                throw new RuntimeException("Invalid URL " + cmd.originalUrl());
             }
         }
         var shortKey = generateUniqueShortKey();
         var shortUrl = new ShortUrl();
         shortUrl.setOriginalUrl(cmd.originalUrl());
         shortUrl.setShortKey(shortKey);
-        if(cmd.userId() == null) {
+        if (cmd.userId() == null) {
             shortUrl.setCreatedBy(null);
             shortUrl.setIsPrivate(false);
             shortUrl.setExpiresAt(Instant.now().plus(properties.defaultExpiryInDays(), DAYS));
         } else {
             shortUrl.setCreatedBy(userRepository.findById(cmd.userId()).orElseThrow());
             shortUrl.setIsPrivate(cmd.isPrivate() != null && cmd.isPrivate());
-            shortUrl.setExpiresAt(cmd.expirationInDays() != null ? Instant.now().plus(cmd.expirationInDays(), DAYS) : null);
+            shortUrl.setExpiresAt(cmd.expirationInDays() != null
+                    ? Instant.now().plus(cmd.expirationInDays(), DAYS)
+                    : null);
         }
         shortUrl.setClickCount(0L);
         shortUrl.setCreatedAt(Instant.now());
@@ -100,28 +104,51 @@ public class ShortUrlService {
         return entityMapper.toShortUrlDto(shortUrl);
     }
 
+    /**
+     * Handles the full access flow:
+     * - Validates expiry, active status, and privacy
+     * - Increments click count (always hits DB — intentionally not cached)
+     * - Uses a separate cached method only for the lookup
+     */
     @Transactional
-    @Cacheable(value = "shortUrls", key = "#shortKey")
     public Optional<ShortUrlDto> accessShortUrl(String shortKey, Long userId) {
         Optional<ShortUrl> shortUrlOptional = shortUrlRepository.findByShortKey(shortKey);
-        if(shortUrlOptional.isEmpty()) {
+
+        if (shortUrlOptional.isEmpty()) {
             return Optional.empty();
         }
+
         ShortUrl shortUrl = shortUrlOptional.get();
-        if(shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(Instant.now())) {
+
+        if (shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(Instant.now())) {
             return Optional.empty();
         }
-        if(shortUrl.getIsActive() != null && !shortUrl.getIsActive()) {
+
+        if (shortUrl.getIsActive() != null && !shortUrl.getIsActive()) {
             return Optional.empty();
         }
-        if(shortUrl.getIsPrivate() != null && shortUrl.getIsPrivate()
+
+        if (shortUrl.getIsPrivate() != null && shortUrl.getIsPrivate()
                 && shortUrl.getCreatedBy() != null
                 && !Objects.equals(shortUrl.getCreatedBy().getId(), userId)) {
             return Optional.empty();
         }
-        shortUrl.setClickCount(shortUrl.getClickCount()+1);
+
+        // Safe to increment — outside of any cache
+        shortUrl.setClickCount(shortUrl.getClickCount() + 1);
         shortUrlRepository.save(shortUrl);
-        return shortUrlOptional.map(entityMapper::toShortUrlDto);
+
+        return Optional.of(entityMapper.toShortUrlDto(shortUrl));
+    }
+
+    /**
+     * Cached lookup — only for read purposes (e.g. previewing a URL).
+     * Never use this for redirect + click tracking.
+     */
+    @Cacheable(value = "shortUrls", key = "#shortKey")
+    public Optional<ShortUrlDto> getCachedShortUrl(String shortKey) {
+        return shortUrlRepository.findByShortKey(shortKey)
+                .map(entityMapper::toShortUrlDto);
     }
 
     private String generateUniqueShortKey() {
