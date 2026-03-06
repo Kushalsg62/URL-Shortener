@@ -7,7 +7,6 @@ function copyLink(btn) {
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(url).then(() => flashCopied(btn));
     } else {
-        // Fallback for http or older browsers
         const ta = document.createElement('textarea');
         ta.value = url;
         ta.style.position = 'fixed';
