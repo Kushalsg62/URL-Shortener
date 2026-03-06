@@ -1,30 +1,46 @@
-<nav th:if="${shortUrls.totalPages > 1}">
-    <ul class="pagination justify-content-center">
+<nav th:if="${shortUrls.totalPages > 1}" class="saas-pagination">
+    <ul class="pagination justify-content-center align-items-center gap-1 my-3">
+
+        <!-- First -->
         <li class="page-item" th:classappend="${shortUrls.isFirst ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{${paginationUrl}(page=1)}" aria-label="First">
-                <span aria-hidden="true">First</span>
-            </a>
+            <a class="page-link saas-page-link"
+               th:href="@{${paginationUrl}(page=1)}"
+               aria-label="First">First</a>
         </li>
+
+        <!-- Previous -->
         <li class="page-item" th:classappend="${shortUrls.isFirst ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{${paginationUrl}(page=${shortUrls.pageNumber - 1})}" aria-label="Previous">
-                <span aria-hidden="true">Previous</span>
-            </a>
+            <a class="page-link saas-page-link"
+               th:href="@{${paginationUrl}(page=${shortUrls.pageNumber - 1})}"
+               aria-label="Previous">&#8592; Prev</a>
         </li>
+
+        <!-- Current page indicator -->
         <li class="page-item disabled">
-                        <span class="page-link" aria-label="Current Page Number of Total Pages"
-                              th:text="${'Page '+shortUrls.pageNumber + ' of ' + shortUrls.totalPages + ' (Total: ' + shortUrls.totalElements+')'}">
-                           Page 1 of 10 (Total: 200)
-                        </span>
+            <span class="saas-page-info"
+                  th:text="${shortUrls.pageNumber + ' of ' + shortUrls.totalPages}">
+                1 of 10
+            </span>
         </li>
+
+        <!-- Next -->
         <li class="page-item" th:classappend="${shortUrls.isLast ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{${paginationUrl}(page=${shortUrls.pageNumber + 1})}" aria-label="Next">
-                <span aria-hidden="true">Next</span>
-            </a>
+            <a class="page-link saas-page-link"
+               th:href="@{${paginationUrl}(page=${shortUrls.pageNumber + 1})}"
+               aria-label="Next">Next &#8594;</a>
         </li>
+
+        <!-- Last -->
         <li class="page-item" th:classappend="${shortUrls.isLast ? 'disabled' : ''}">
-            <a class="page-link" th:href="@{${paginationUrl}(page=${shortUrls.totalPages})}" aria-label="Last">
-                <span aria-hidden="true">Last</span>
-            </a>
+            <a class="page-link saas-page-link"
+               th:href="@{${paginationUrl}(page=${shortUrls.totalPages})}"
+               aria-label="Last">Last</a>
         </li>
+
     </ul>
+
+    <!-- Total count below -->
+    <p class="saas-pagination-total"
+       th:text="${shortUrls.totalElements + ' total links'}">0 total links</p>
+
 </nav>

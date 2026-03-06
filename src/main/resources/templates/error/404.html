@@ -9,8 +9,15 @@
     <title>Page Not Found</title>
 </head>
 <body>
-<div layout:fragment="content"  class="mt-5">
-<h1>Request Short URL Not Found or Expired</h1>
+<div layout:fragment="content">
+    <div class="error-page">
+        <div class="error-code">404</div>
+        <h2 class="error-title">Link not found or expired</h2>
+        <p class="error-desc">
+            The short URL you're looking for doesn't exist, has expired, or has been deactivated.
+        </p>
+        <a th:href="@{/}" class="saas-action-btn">Back to Home</a>
+    </div>
 </div>
 </body>
 </html>
