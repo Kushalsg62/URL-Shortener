@@ -78,16 +78,11 @@ public class ShortUrlService {
     @Transactional
     public ShortUrlDto createShortUrl(CreateShortUrlCmd cmd) {
         if (properties.validateOriginalUrl()) {
-            boolean urlExists = UrlExistenceValidator.isUrlExists(cmd.originalUrl());
-            if (!urlExists) {
-                throw new RuntimeException("Invalid URL " + cmd.originalUrl());
-            }
+            validateUrl(cmd.originalUrl());
         }
 
         String shortKey;
         if (cmd.customAlias() != null && !cmd.customAlias().isBlank()) {
-            // Append 6-char random suffix to alias — guarantees global uniqueness
-            // e.g. "google" → "google-a1b2c3"
             shortKey = generateUniqueAliasKey(cmd.customAlias().toLowerCase().trim());
         } else {
             shortKey = generateUniqueShortKey();
@@ -114,6 +109,35 @@ public class ShortUrlService {
         shortUrl.setCreatedAt(Instant.now());
         shortUrlRepository.save(shortUrl);
         return entityMapper.toShortUrlDto(shortUrl);
+    }
+
+    /**
+     * Validates the URL with specific error messages for each failure case.
+     * Truncates long URLs in messages to prevent UI overflow.
+     */
+    private void validateUrl(String url) {
+        String displayUrl = url.length() > 60 ? url.substring(0, 60) + "..." : url;
+
+        // Check 1 — must have protocol
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            throw new RuntimeException(
+                    "Invalid URL: must start with http:// or https://");
+        }
+
+        // Check 2 — must be a valid URL format
+        try {
+            new java.net.URI(url).toURL();
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Invalid URL format: '" + displayUrl + "' is not a properly formed URL");
+        }
+
+        // Check 3 — must actually exist and be reachable
+        if (!UrlExistenceValidator.isUrlExists(url)) {
+            throw new RuntimeException(
+                    "URL could not be reached: '" + displayUrl + "'. " +
+                            "Please check the URL is correct and the site is accessible.");
+        }
     }
 
     @Transactional
@@ -151,11 +175,6 @@ public class ShortUrlService {
                 .map(entityMapper::toShortUrlDto);
     }
 
-    /**
-     * Generates a unique key from a custom alias by appending a 6-char suffix.
-     * e.g. "google" → "google-a1b2c3"
-     * Retries if collision occurs (astronomically unlikely).
-     */
     private String generateUniqueAliasKey(String alias) {
         String shortKey;
         do {
