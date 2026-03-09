@@ -1,0 +1,19 @@
+[33mcda57af[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m On point error message for better user experience
+[33m9804645[m layout changes
+[33m9710cc1[m clean format
+[33m8509a55[m feat: custom alias appends 6-char suffix for global uniqueness e.g. google-a1b2c3
+[33mda915bd[m Changes made to pagination UI
+[33m1397324[m Changes made for Login and Register UI
+[33m05df60b[m Major UI change
+[33mbe61872[m fix: remove @Cacheable from accessShortUrl to fix click count not updating
+[33m6ed996a[m Minor UI changes
+[33mb46225b[m Added QR Code and updated created and expires utc time
+[33m9f97d59[m Update Status UI
+[33m7b501a2[m Changed toggle UI to link UI
+[33mef6a4c6[m Added URL status display and toggle feature
+[33mb312b94[m Added URL status toggle feature - backend complete
+[33m62f0519[m load test
+[33m88ce42b[m Updated frontend
+[33m06a2b30[m Fixed persistent storage and removed old sample data
+[33m6d4de45[m Cleaned database - removed old sample URLs
+[33mde71b00[m[33m ([m[1;31morigin/backup-working-version[m[33m, [m[1;32mbackup-working-version[m[33m)[m Initial commit: Working URL Shortener application

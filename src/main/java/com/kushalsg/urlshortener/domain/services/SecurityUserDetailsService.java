@@ -22,7 +22,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(
-                    () -> new UsernameNotFoundException("User not found with email: " + username)
+                        () -> new UsernameNotFoundException("User not found with email: " + username)
                 );
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
